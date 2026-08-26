@@ -35,63 +35,66 @@
     if (v) valores[k] = v;
   });
 
-  /* Rellena los campos ocultos del form de HubSpot que tengan estos nombres.
-     Para que funcione, crea los campos ocultos utm_source, utm_medium,
-     utm_campaign, utm_content y utm_term dentro del formulario en HubSpot. */
-  function rellenarUtms(raiz) {
-    Object.keys(valores).forEach(function (k) {
-      var campo = raiz.querySelector('input[name="' + k + '"]');
-      if (campo && !campo.value) {
-        campo.value = valores[k];
-        campo.dispatchEvent(new Event('input', { bubbles: true }));
-        campo.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    });
-  }
+  /* OJO: el formulario vive en un iframe cross-origin, así que desde aquí
+     NO se pueden rellenar sus campos. La atribución la hace el código de
+     seguimiento de HubSpot (js.hs-scripts.com), que lee los UTMs de la URL
+     de esta página. Guardamos los valores igual por si se necesitan para
+     armar links salientes o una futura página de gracias. */
+  window.tcfUtms = valores;
 
-  /* ---------- 3. Detectar cuándo HubSpot terminó de renderizar ---------- */
+  /* ---------- 3. Detectar cuándo HubSpot terminó de renderizar ----------
+     IMPORTANTE: el embed nuevo de HubSpot NO inyecta un <form> en el DOM,
+     inyecta un <iframe> cross-origin. Por eso buscamos un iframe con altura
+     real, y NUNCA tocamos su contenido: si lo borráramos, matamos el
+     formulario aunque esté cargando bien. */
   var contenedor = document.querySelector('.formcard');
   var marco = document.querySelector('.hs-form-frame');
 
+  function iframeVivo() {
+    var f = marco && marco.querySelector('iframe');
+    return !!(f && f.clientHeight > 40);
+  }
+
   if (contenedor && marco) {
     var listo = false;
-    var observer = new MutationObserver(function () {
-      if (listo) return;
-      if (marco.querySelector('form')) {
-        listo = true;
-        contenedor.classList.add('hs-ok');
-        rellenarUtms(marco);
-        track('form_visible', { form: 'asesoria_hubspot' });
-        observer.disconnect();
-      }
-    });
-    observer.observe(marco, { childList: true, subtree: true });
 
-    /* Red de seguridad: si a los 12 s no cargó, mostramos una salida alternativa
-       para no perder el lead por un bloqueador o una caída del script. */
-    setTimeout(function () {
+    function marcarListo() {
       if (listo) return;
-      observer.disconnect();
+      listo = true;
       contenedor.classList.add('hs-ok');
-      marco.innerHTML =
-        '<div class="hs-fallback">' +
-        '<p><strong>No pudimos cargar el formulario.</strong></p>' +
-        '<p>Escríbenos directamente y coordinamos tu asesoría igual.</p>' +
-        '<a class="btn btn-lg" href="https://wa.me/56930094515?text=Hola%2C%20quiero%20agendar%20mi%20asesor%C3%ADa%20gratuita">Agendar por WhatsApp →</a>' +
-        '<a class="hs-fallback-tel" href="tel:+56930094515">o llámanos: +56 9 3009 4515</a>' +
-        '</div>';
-      track('form_error', { form: 'asesoria_hubspot' });
-    }, 12000);
+      track('form_visible', { form: 'asesoria_hubspot' });
+    }
+
+    /* Revisamos cada 400 ms durante 20 s. El iframe aparece rápido pero
+       tarda en reportar su altura al padre. */
+    var intentos = 0;
+    var reloj = setInterval(function () {
+      intentos++;
+      if (iframeVivo()) { clearInterval(reloj); marcarListo(); return; }
+
+      if (intentos >= 50) {              /* 20 segundos */
+        clearInterval(reloj);
+        contenedor.classList.add('hs-ok');
+        /* El aviso se AÑADE debajo, no reemplaza el iframe. */
+        if (!document.querySelector('.hs-fallback')) {
+          var aviso = document.createElement('div');
+          aviso.className = 'hs-fallback';
+          aviso.innerHTML =
+            '<p><strong>¿No ves el formulario?</strong></p>' +
+            '<p>Escríbenos y coordinamos tu asesoría igual.</p>' +
+            '<a class="btn btn-lg" href="https://wa.me/56930094515?text=Hola%2C%20quiero%20agendar%20mi%20asesor%C3%ADa%20gratuita">Agendar por WhatsApp →</a>' +
+            '<a class="hs-fallback-tel" href="tel:+56930094515">o llámanos: +56 9 3009 4515</a>';
+          marco.parentNode.insertBefore(aviso, marco.nextSibling);
+        }
+        track('form_error', { form: 'asesoria_hubspot' });
+      }
+    }, 400);
   }
 
   /* ---------- 4. Evento de conversión de HubSpot ---------- */
   addEventListener('message', function (e) {
     var d = e.data;
     if (!d || d.type !== 'hsFormCallback') return;
-
-    if (d.eventName === 'onFormReady' && marco) {
-      rellenarUtms(marco);
-    }
 
     if (d.eventName === 'onFormSubmitted') {
       track('generate_lead', { form: 'asesoria_hubspot', form_id: d.id || '' });
