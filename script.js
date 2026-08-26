@@ -1,41 +1,11 @@
-/* Tu Casa Fácil — landing asesoría */
+/* ============================================================
+   Tu Casa Fácil — landing asesoría
+   Header, UTMs, tracking y enganche con el formulario de HubSpot
+   ============================================================ */
 (function () {
   'use strict';
 
-  /* 1. Header con fondo al hacer scroll */
-  var hd = document.getElementById('hd');
-  if (hd) {
-    addEventListener('scroll', function () {
-      hd.classList.toggle('scrolled', scrollY > 40);
-    }, { passive: true });
-  }
-
-  /* 2. Selección de horario */
-  var horaInput = document.getElementById('hora');
-  document.querySelectorAll('.slot').forEach(function (b) {
-    b.addEventListener('click', function () {
-      document.querySelectorAll('.slot').forEach(function (x) { x.classList.remove('sel'); });
-      b.classList.add('sel');
-      if (horaInput) horaInput.value = b.dataset.hora || b.textContent.trim();
-      track('selecciona_horario', { hora: horaInput ? horaInput.value : '' });
-    });
-  });
-
-  /* 3. UTMs -> campos ocultos (persistidos en sessionStorage) */
-  var qs = new URLSearchParams(location.search);
-  ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function (k) {
-    var v = qs.get(k);
-    try {
-      if (v) sessionStorage.setItem(k, v);
-      else v = sessionStorage.getItem(k);
-    } catch (e) {}
-    var el = document.getElementById(k);
-    if (el) el.value = v || '';
-  });
-  var pag = document.getElementById('pagina');
-  if (pag) pag.value = location.href;
-
-  /* 4. Eventos de tracking (dataLayer / GA4 / Meta Pixel) */
+  /* ---------- Tracking: un solo punto de salida ---------- */
   function track(nombre, datos) {
     datos = datos || {};
     window.dataLayer = window.dataLayer || [];
@@ -44,22 +14,108 @@
   }
   window.tcfTrack = track;
 
-  /* 4a. Clic en CTAs */
+  /* ---------- 1. Header con fondo al hacer scroll ---------- */
+  var hd = document.getElementById('hd');
+  if (hd) {
+    addEventListener('scroll', function () {
+      hd.classList.toggle('scrolled', scrollY > 40);
+    }, { passive: true });
+  }
+
+  /* ---------- 2. UTMs: capturar y persistir en la sesión ---------- */
+  var UTMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'];
+  var qs = new URLSearchParams(location.search);
+  var valores = {};
+  UTMS.forEach(function (k) {
+    var v = qs.get(k);
+    try {
+      if (v) sessionStorage.setItem(k, v);
+      else v = sessionStorage.getItem(k);
+    } catch (e) {}
+    if (v) valores[k] = v;
+  });
+
+  /* Rellena los campos ocultos del form de HubSpot que tengan estos nombres.
+     Para que funcione, crea los campos ocultos utm_source, utm_medium,
+     utm_campaign, utm_content y utm_term dentro del formulario en HubSpot. */
+  function rellenarUtms(raiz) {
+    Object.keys(valores).forEach(function (k) {
+      var campo = raiz.querySelector('input[name="' + k + '"]');
+      if (campo && !campo.value) {
+        campo.value = valores[k];
+        campo.dispatchEvent(new Event('input', { bubbles: true }));
+        campo.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+  }
+
+  /* ---------- 3. Detectar cuándo HubSpot terminó de renderizar ---------- */
+  var contenedor = document.querySelector('.formcard');
+  var marco = document.querySelector('.hs-form-frame');
+
+  if (contenedor && marco) {
+    var listo = false;
+    var observer = new MutationObserver(function () {
+      if (listo) return;
+      if (marco.querySelector('form')) {
+        listo = true;
+        contenedor.classList.add('hs-ok');
+        rellenarUtms(marco);
+        track('form_visible', { form: 'asesoria_hubspot' });
+        observer.disconnect();
+      }
+    });
+    observer.observe(marco, { childList: true, subtree: true });
+
+    /* Red de seguridad: si a los 12 s no cargó, mostramos una salida alternativa
+       para no perder el lead por un bloqueador o una caída del script. */
+    setTimeout(function () {
+      if (listo) return;
+      observer.disconnect();
+      contenedor.classList.add('hs-ok');
+      marco.innerHTML =
+        '<div class="hs-fallback">' +
+        '<p><strong>No pudimos cargar el formulario.</strong></p>' +
+        '<p>Escríbenos directamente y coordinamos tu asesoría igual.</p>' +
+        '<a class="btn btn-lg" href="https://wa.me/56930094515?text=Hola%2C%20quiero%20agendar%20mi%20asesor%C3%ADa%20gratuita">Agendar por WhatsApp →</a>' +
+        '<a class="hs-fallback-tel" href="tel:+56930094515">o llámanos: +56 9 3009 4515</a>' +
+        '</div>';
+      track('form_error', { form: 'asesoria_hubspot' });
+    }, 12000);
+  }
+
+  /* ---------- 4. Evento de conversión de HubSpot ---------- */
+  addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || d.type !== 'hsFormCallback') return;
+
+    if (d.eventName === 'onFormReady' && marco) {
+      rellenarUtms(marco);
+    }
+
+    if (d.eventName === 'onFormSubmitted') {
+      track('generate_lead', { form: 'asesoria_hubspot', form_id: d.id || '' });
+      if (typeof fbq === 'function') fbq('track', 'Lead');
+      /* Si creas gracias.html, descomenta para medir la conversión con URL propia:
+         setTimeout(function(){ location.href = 'gracias.html'; }, 800); */
+    }
+  });
+
+  /* ---------- 5. Eventos de micro-conversión ---------- */
   document.querySelectorAll('a[href="#agendar"], .btn, .btn-out, .btn-ghost').forEach(function (a) {
     a.addEventListener('click', function () {
       track('click_cta', { texto: (a.textContent || '').trim().slice(0, 60) });
     });
   });
 
-  /* 4b. Clic en WhatsApp y teléfono */
   document.querySelectorAll('a[href^="https://wa.me"]').forEach(function (a) {
     a.addEventListener('click', function () { track('click_whatsapp', {}); });
   });
+
   document.querySelectorAll('a[href^="tel:"]').forEach(function (a) {
     a.addEventListener('click', function () { track('click_telefono', {}); });
   });
 
-  /* 4c. Scroll depth 25/50/75/100 */
   var hitos = [25, 50, 75, 100], vistos = {};
   addEventListener('scroll', function () {
     var alto = document.body.scrollHeight - innerHeight;
@@ -69,34 +125,4 @@
       if (pct >= h && !vistos[h]) { vistos[h] = 1; track('scroll_depth', { porcentaje: h }); }
     });
   }, { passive: true });
-
-  /* 5. Envío del formulario */
-  var form = document.getElementById('form-asesoria');
-  var msg = document.getElementById('form-msg');
-  if (form) {
-    form.addEventListener('submit', function (e) {
-      var falta = [];
-      ['nombre', 'telefono', 'email', 'fecha'].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el && !el.value.trim()) falta.push(el);
-      });
-      if (!horaInput || !horaInput.value) falta.push(horaInput);
-
-      if (falta.length) {
-        e.preventDefault();
-        if (msg) { msg.textContent = 'Completa los campos obligatorios y elige un horario.'; msg.style.color = '#ff8080'; }
-        if (falta[0] && falta[0].focus) falta[0].focus();
-        return;
-      }
-
-      track('generate_lead', {
-        form: 'asesoria_gratuita',
-        terreno: (document.getElementById('terreno') || {}).value,
-        metraje: (document.getElementById('metraje') || {}).value
-      });
-      if (typeof fbq === 'function') fbq('track', 'Lead');
-
-      if (msg) { msg.textContent = 'Enviando tu solicitud…'; msg.style.color = ''; }
-    });
-  }
 })();

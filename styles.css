@@ -1,0 +1,220 @@
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#070707;color:#f7f7f7;font-family:"Segoe UI","Helvetica Neue",Arial,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+::selection{background:#54b10f;color:#fff}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1152px;margin:0 auto;padding:0 20px}
+/* header */
+header{position:fixed;inset:0 0 auto 0;z-index:50;transition:.3s;padding:16px 0}
+header.scrolled{background:rgba(7,7,7,.95);backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.hbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hbar img{height:34px;max-width:52vw;object-fit:contain}
+.hbar .btn-sm{flex:none;white-space:nowrap}
+@media(max-width:420px){.hbar img{height:28px}.btn-sm{padding:9px 14px;font-size:13px}}
+nav{display:none;gap:32px;font-size:14px;color:#c6c6c6}
+nav a:hover{color:#fff}
+.btn{display:inline-block;border-radius:999px;background:#54b10f;color:#fff;font-weight:700;transition:.2s}
+.btn:hover{background:#46940d}
+.btn-sm{padding:10px 20px;font-size:14px}
+.btn-lg{padding:16px 32px;font-size:16px;box-shadow:0 10px 30px rgba(84,177,15,.3)}
+.btn-lg:hover{transform:scale(1.03)}
+.btn-ghost{border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:16px 32px;font-weight:600;font-size:16px}
+.btn-ghost:hover{border-color:rgba(255,255,255,.6)}
+.btn-out{border:1px solid #54b10f;color:#54b10f;border-radius:999px;padding:12px 24px;font-size:14px;font-weight:600;display:inline-block;transition:.2s}
+.btn-out:hover{background:#54b10f;color:#fff}
+/* hero */
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .g1{position:absolute;inset:0;background:linear-gradient(90deg,#070707,rgba(7,7,7,.8) 50%,rgba(7,7,7,.3))}
+.hero .g2{position:absolute;left:0;right:0;bottom:0;height:160px;background:linear-gradient(to top,#070707,transparent)}
+.hero .inner{position:relative;z-index:10;width:100%;padding:144px 0 96px}
+.pill{display:inline-flex;gap:8px;border:1px solid rgba(84,177,15,.5);background:rgba(84,177,15,.1);color:#7fd434;border-radius:999px;padding:6px 16px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+h1{margin-top:24px;font-size:40px;line-height:1.12;font-weight:700;max-width:640px}
+h1 span{color:#54b10f}
+.lead{margin-top:24px;max-width:560px;font-size:18px;color:#c6c6c6}
+.cta-row{margin-top:40px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+/* sections */
+section.pad{padding:96px 0}
+.eyebrow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:#54b10f}
+h2{margin-top:12px;font-size:30px;font-weight:700;line-height:1.2}
+.sub{margin-top:16px;color:#c6c6c6;max-width:560px}
+.grid2{display:grid;gap:56px;align-items:center}
+.grid2>div:first-child{display:flex;flex-direction:column}
+.cardgrid{margin-top:40px;display:grid;gap:24px}
+.card{border:1px solid rgba(255,255,255,.1);background:#111;border-radius:16px;padding:24px;transition:.2s}
+.card:hover{border-color:rgba(84,177,15,.5)}
+.card .ico{font-size:24px}
+.card h3{margin-top:12px;font-size:16px}
+.card p{margin-top:8px;font-size:14px;color:#a8a8a8}
+.teamwrap{position:relative;border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 25px 50px rgba(0,0,0,.6)}
+.teamwrap img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:0;border:0}
+.teamwrap::after{content:"";position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(to top,rgba(0,0,0,.75),transparent);pointer-events:none}
+.badge{position:absolute;z-index:2;bottom:20px;left:20px;max-width:calc(100% - 40px);background:#54b10f;border-radius:16px;padding:14px 20px;box-shadow:0 15px 35px rgba(0,0,0,.35)}
+.badge p{font-size:14px;font-weight:700}
+.badge span{font-size:12px;color:rgba(255,255,255,.85)}
+.dark{background:#0d0d0d}
+.rowhead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px}
+.models{margin-top:48px;display:grid;gap:24px}
+.model{overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#111;border-radius:16px;transition:.2s}
+.model:hover{border-color:rgba(84,177,15,.6)}
+.model .ph{aspect-ratio:5/4;overflow:hidden}
+.model img{width:100%;height:100%;object-fit:cover;transition:.5s}
+.model:hover img{transform:scale(1.05)}
+.model .body{padding:20px}
+.model h3{font-size:16px}
+.model .d{margin-top:4px;font-size:14px;color:#a8a8a8}
+.model .p{margin-top:12px;font-size:14px;color:#c6c6c6}
+.model .p b{color:#7fd434}
+.steps{margin-top:56px;display:grid;gap:32px}
+.step{border:1px solid rgba(255,255,255,.1);background:#111;border-radius:16px;padding:32px}
+.step .n{font-size:36px;font-weight:900;color:#54b10f}
+.step h3{margin-top:16px;font-size:18px}
+.step p{margin-top:12px;font-size:14px;color:#a8a8a8}
+.rating{display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.1);background:#111;border-radius:16px;padding:16px 24px}
+.rating .big{font-size:30px;font-weight:900;color:#fcb900}
+.stars{color:#fcb900}
+.tsts{margin-top:48px;display:grid;gap:24px}
+.tst{display:flex;flex-direction:column;border:1px solid rgba(255,255,255,.1);background:#111;border-radius:16px;padding:28px}
+.tst blockquote{margin-top:16px;flex:1;font-size:14px;color:#c6c6c6}
+.tst figcaption{margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:16px;font-size:14px;font-weight:700}
+.tst figcaption span{display:block;font-size:12px;font-weight:400;color:#a8a8a8}
+/* form */
+.formgrid{display:grid;gap:48px;align-items:start}
+.formgrid>div:first-child{display:flex;flex-direction:column}
+.formimg{display:block;width:100%;height:auto;margin-top:40px;aspect-ratio:16/10;object-fit:cover;max-height:340px;border-radius:16px;border:1px solid rgba(255,255,255,.1)}
+.checks{margin-top:32px;display:grid;gap:16px;font-size:14px;color:#c6c6c6}
+.checks li{display:flex;gap:12px;list-style:none}
+.checks .c{flex:none;width:20px;height:20px;border-radius:999px;background:#54b10f;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+/* ============================================================
+   FORMULARIO HUBSPOT — tarjeta contenedora
+   ============================================================ */
+.formcard{border:1px solid rgba(255,255,255,.1);background:#111;border-radius:24px;padding:28px;box-shadow:0 25px 50px rgba(0,0,0,.5)}
+.fine{margin-top:20px;text-align:center;font-size:12px;color:#777}
+
+/* Esqueleto de carga: evita el hueco vacío mientras baja el script */
+.form-skeleton{display:grid;gap:18px}
+.form-skeleton span{display:block;height:46px;border-radius:12px;background:linear-gradient(90deg,#1a1a1a,#242424,#1a1a1a);background-size:200% 100%;animation:sk 1.4s linear infinite}
+.form-skeleton span.lg{height:54px;border-radius:999px;background:linear-gradient(90deg,#1e2a16,#2a3a1e,#1e2a16);background-size:200% 100%}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.hs-ok .form-skeleton{display:none}
+.hs-ok .hs-form-frame{animation:fade .35s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ============================================================
+   OVERRIDES DE HUBSPOT
+   Cubre las dos familias de clases: embed clásico (.hs-*)
+   y editor nuevo (.hsfc-*). Requiere !important porque HubSpot
+   inyecta su propia hoja de estilos después de la nuestra.
+   ============================================================ */
+.formcard .hs-form-frame{color:#f7f7f7}
+.formcard form{border:0!important;background:none!important;padding:0!important;box-shadow:none!important;border-radius:0!important}
+
+/* Etiquetas */
+.formcard label,
+.formcard .hs-form-field>label,
+.formcard .hsfc-FieldLabel{
+ display:block!important;margin-bottom:6px!important;font-size:12px!important;font-weight:600!important;
+ text-transform:uppercase!important;letter-spacing:.04em!important;color:#a8a8a8!important;
+ font-family:inherit!important;line-height:1.4!important}
+.formcard .hs-form-required,.formcard .hsfc-FieldLabel__Required{color:#54b10f!important}
+
+/* Campos */
+.formcard input[type=text],.formcard input[type=email],.formcard input[type=tel],
+.formcard input[type=number],.formcard input[type=date],.formcard input[type=time],
+.formcard select,.formcard textarea,
+.formcard .hs-input,.formcard .hsfc-TextInput,.formcard .hsfc-DropdownInput,
+.formcard .hsfc-TextareaInput,.formcard .hsfc-DateInput,.formcard .hsfc-PhoneInput input{
+ width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+ border:1px solid rgba(255,255,255,.15)!important;background:#1a1a1a!important;border-radius:12px!important;
+ padding:12px 16px!important;font-size:14px!important;line-height:1.4!important;color:#fff!important;
+ font-family:inherit!important;outline:none!important;color-scheme:dark;transition:.2s;box-shadow:none!important}
+.formcard input::placeholder,.formcard textarea::placeholder{color:#777!important;opacity:1!important}
+.formcard input:focus,.formcard select:focus,.formcard textarea:focus,
+.formcard .hsfc-TextInput:focus,.formcard .hsfc-DropdownInput:focus{
+ border-color:#54b10f!important;box-shadow:0 0 0 3px rgba(84,177,15,.3)!important}
+.formcard textarea{resize:none!important;min-height:96px!important}
+.formcard select option,.formcard optgroup{background:#1a1a1a!important;color:#fff!important}
+.formcard input:-webkit-autofill{-webkit-text-fill-color:#fff!important;-webkit-box-shadow:0 0 0 1000px #1a1a1a inset!important}
+
+/* Teléfono internacional (select de país + input) */
+.formcard .hs-fieldtype-intl-phone.hs-input{display:flex!important;gap:8px!important;background:none!important;border:0!important;padding:0!important}
+.formcard .hs-fieldtype-intl-phone select{flex:none!important;width:110px!important}
+
+/* Checkbox y radio */
+.formcard input[type=checkbox],.formcard input[type=radio]{
+ width:auto!important;min-width:16px!important;accent-color:#54b10f;margin:2px 8px 0 0!important;padding:0!important}
+.formcard .inputs-list{list-style:none!important;padding:0!important;margin:0!important;display:grid!important;gap:10px!important}
+.formcard .inputs-list label,.formcard .hs-form-booleancheckbox label,
+.formcard .hsfc-CheckboxField label,.formcard .legal-consent-container label{
+ display:flex!important;align-items:flex-start!important;text-transform:none!important;letter-spacing:0!important;
+ font-size:13px!important;font-weight:400!important;color:#c6c6c6!important;margin-bottom:0!important}
+.formcard .legal-consent-container p,.formcard .hs-richtext{font-size:12px!important;color:#8a8a8a!important;line-height:1.5!important}
+.formcard .hs-richtext a,.formcard .legal-consent-container a{color:#7fd434!important;text-decoration:underline!important}
+
+/* Espaciado entre campos */
+.formcard .hs-form-field,.formcard .hsfc-FieldGroup,.formcard .hsfc-Row{margin-bottom:20px!important}
+.formcard .hs-form-field:last-of-type{margin-bottom:0!important}
+.formcard fieldset,.formcard fieldset.form-columns-1,
+.formcard fieldset.form-columns-2,.formcard fieldset.form-columns-3{
+ max-width:none!important;width:100%!important;border:0!important;padding:0!important;margin:0!important}
+.formcard .hs-form-field .input{margin:0!important}
+.formcard .form-columns-2 .hs-form-field,.formcard .form-columns-3 .hs-form-field{width:100%!important;float:none!important}
+@media(min-width:768px){
+ .formcard fieldset.form-columns-2{display:grid!important;grid-template-columns:1fr 1fr!important;gap:0 20px!important}
+ .formcard fieldset.form-columns-3{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:0 20px!important}
+}
+
+/* Botón de envío */
+.formcard input[type=submit],.formcard .hs-button,.formcard .hsfc-Button,
+.formcard button[type=submit]{
+ margin-top:8px!important;width:100%!important;border:0!important;border-radius:999px!important;
+ background:#54b10f!important;color:#fff!important;padding:16px!important;font-size:16px!important;
+ font-weight:700!important;line-height:1.2!important;cursor:pointer!important;font-family:inherit!important;
+ text-transform:none!important;letter-spacing:0!important;
+ box-shadow:0 10px 30px rgba(84,177,15,.3)!important;transition:.2s}
+.formcard input[type=submit]:hover,.formcard .hs-button:hover,
+.formcard .hsfc-Button:hover,.formcard button[type=submit]:hover{background:#46940d!important}
+.formcard .actions{padding:0!important;margin:0!important}
+
+/* Errores */
+.formcard .hs-error-msg,.formcard .hs-error-msgs label,
+.formcard .hsfc-ErrorAlert,.formcard .hsfc-FieldError{
+ color:#ff8080!important;font-size:12px!important;font-weight:400!important;
+ text-transform:none!important;letter-spacing:0!important;margin-top:6px!important}
+.formcard .hs-error-msgs{list-style:none!important;padding:0!important;margin:0!important}
+.formcard .hs-input.invalid,.formcard .hs-input.error{border-color:#ff8080!important}
+
+/* Mensaje de éxito */
+.formcard .submitted-message,.formcard .hsfc-DoneMessage,.formcard .hsfc-Step--done{
+ color:#f7f7f7!important;font-size:15px!important;line-height:1.6!important;text-align:center!important}
+.formcard .submitted-message p,.formcard .hsfc-DoneMessage p{color:#c6c6c6!important}
+/* footer */
+footer{border-top:1px solid rgba(255,255,255,.1);background:#050505}
+.fgrid{display:grid;gap:40px;padding:56px 0}
+.fgrid img{height:36px}
+.fgrid p{margin-top:16px;max-width:320px;font-size:14px;color:#a8a8a8}
+.fgrid h3{font-size:14px;text-transform:uppercase;letter-spacing:.08em}
+.fgrid ul{margin-top:16px;list-style:none;display:grid;gap:10px;font-size:14px;color:#c6c6c6}
+.fgrid a:hover{color:#54b10f}
+.copy{border-top:1px solid rgba(255,255,255,.05);padding:20px 0;text-align:center;font-size:12px;color:#777}
+@media(min-width:768px){
+ nav{display:flex} h1{font-size:60px} h2{font-size:36px}
+ .cardgrid{grid-template-columns:1fr 1fr} .steps{grid-template-columns:repeat(3,1fr)}
+ .tsts{grid-template-columns:repeat(3,1fr)} .models{grid-template-columns:1fr 1fr}
+ .fgrid{grid-template-columns:repeat(3,1fr)} .fields{grid-template-columns:1fr 1fr}
+ .formcard{padding:36px}
+}
+@media(min-width:1024px){
+ .grid2{grid-template-columns:1fr 1fr;align-items:stretch}
+ .teamwrap img{height:100%;aspect-ratio:auto;min-height:100%}
+ .models{grid-template-columns:repeat(4,1fr)}
+ .formgrid{grid-template-columns:2fr 3fr}
+}
+.span2{grid-column:1/-1}
+
+/* Salida alternativa si el script de HubSpot no carga */
+.hs-fallback{text-align:center;padding:12px 0}
+.hs-fallback p{font-size:15px;color:#c6c6c6;margin-bottom:8px}
+.hs-fallback p strong{color:#fff}
+.hs-fallback .btn{margin-top:20px}
+.hs-fallback-tel{display:block;margin-top:16px;font-size:14px;color:#a8a8a8;text-decoration:underline}
